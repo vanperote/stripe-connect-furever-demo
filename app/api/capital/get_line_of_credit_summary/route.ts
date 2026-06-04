@@ -14,11 +14,11 @@ export async function GET() {
 
     const connected_account = session.user.stripeAccountId;
 
-    return await stripe.capital.financingSummary
+    return await stripe.capital.financingSummaries
       .retrieve(
         {},
         {
-          apiVersion: '2026-03-25.dahlia; capital_line_of_credit_preview=v1',
+          apiVersion: '2026-06-03.dahlia; capital_line_of_credit_preview=v1',
           stripeAccount: connected_account,
         }
       )
@@ -28,8 +28,8 @@ export async function GET() {
           headers: {'Content-Type': 'application/json'},
         });
       })
-      .catch((reason) => {
-        const message = reason?.['raw']?.['message'];
+      .catch((error) => {
+        const message = error?.['raw']?.['message'];
         if (
           message?.includes(
             'You do not have permission to pass this beta header'
@@ -45,7 +45,7 @@ export async function GET() {
             }
           );
         } else {
-          return new Response(JSON.stringify(reason), {
+          return new Response(JSON.stringify(error), {
             status: 500,
             headers: {'Content-Type': 'application/json'},
           });
